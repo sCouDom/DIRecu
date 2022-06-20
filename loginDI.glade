@@ -48,6 +48,23 @@
           </packing>
         </child>
         <child>
+          <object class="GtkComboBoxText" id="comboLogin">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="active">0</property>
+            <property name="active_id">1</property>
+            <items>
+              <item id="1" translatable="yes">Xestión Clientes</item>
+              <item id="2" translatable="yes">Xestión Servizos</item>
+            </items>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkButton" id="loginButton">
             <property name="label" translatable="yes">Entrar</property>
             <property name="visible">True</property>

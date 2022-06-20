@@ -1,6 +1,12 @@
+from datetime import date
+
+from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.platypus import SimpleDocTemplate, Table, Spacer
+from reportlab.pdfgen import canvas
 import conexionBD
 import gi
-
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
@@ -27,8 +33,28 @@ class servizosVentana(Gtk.Window):
                 Gtk.main_quit()
 
             def on_informeButton_clicked(self):
-                pass
-        #ganso
+                from reportlab.pdfgen import canvas
+                c = canvas.Canvas("/home/dam2a/PycharmProjects/examenDI/informe.pdf")
+                c.setLineWidth(.3)
+                c.setFont('Helvetica', 12)
+                c.drawString(30, 750, 'INFORME OFICIAL')
+                c.drawString(30, 735, 'DOS SERVIZOS PRESTADOS')
+                c.drawString(500, 750, date.today().strftime("%d/%m/%Y"))
+                c.line(30, 700, 560, 700)
+                servs = bbdd.consultaSenParametros("select * from servizos")
+                i = 650
+                c.setFont('Helvetica', 8)
+                for serv in servs:
+                    c.line(50, i, 150, i)
+                    c.line(50, i-50, 150, i-50)
+                    c.line(50, i, 50, i-50)
+                    c.line(150, i, 150, i-50)
+                    i = i - 50
+                    c.drawString(60, i + 10, "ID: " + str(serv[0]))
+                    c.drawString(60, i + 20, "Nome: " + serv[1])
+                    c.drawString(60, i + 30, "Número de clientes: " + str(serv[2]))
+                c.save()
+
         builder_servizos.connect_signals(HandlerServizos())
         ventanaServizos = builder_servizos.get_object("servizosWindow")
         gridServizos = builder_servizos.get_object("servizosGrid")
@@ -45,6 +71,7 @@ class servizosVentana(Gtk.Window):
             columna = Gtk.TreeViewColumn(tituloColumna, celda, text=i)
             self.view.append_column(columna)
         gridServizos.attach(self.view, 0, 2, 1, 1)
+        ventanaServizos.set_title("Servizos")
         ventanaServizos.show_all()
 
 class clientesVentana(Gtk.Window):
@@ -141,6 +168,7 @@ class mainWindow(Gtk.Window):
                 Gtk.main_quit()
 
             def on_loginButton_clicked(self, button):
+                comboLogin = builder_main.get_object("comboLogin")
                 userEntry = builder_main.get_object("nomeUsuario")
                 userInput = userEntry.get_text()
                 pwordEntry = builder_main.get_object("contrasinal")
@@ -148,7 +176,10 @@ class mainWindow(Gtk.Window):
                 userDB = bbdd.consultaSenParametros("select * from usuarios where usuario='" + userInput + "'")
                 if passwordInput == userDB[0][1]:
                     window.hide()
-                    cli_ven = clientesVentana()
+                    if( "Xestión Servizos" != comboLogin.get_active_text()):
+                        cli_ven = clientesVentana()
+                    else:
+                        ser_ven = servizosVentana()
 
         builder_main.connect_signals(Handler())
         window = builder_main.get_object("loginWindow")

@@ -1,0 +1,1 @@
+include bbdd.bd clientes.glade conexionBD.py loginDI.glade mainWindow.py runner servizos.glade
